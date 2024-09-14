@@ -1,0 +1,149 @@
+{% extends 'todos/base.html' %}
+
+{% block title %}
+<title>Todo Web App</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Title Row -->
+  <div class="row">
+    <div class="offset-md-2 col-lg-8">
+      <div class="page-header">
+        <h1 class="page-title">Todo List</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Todo Row -->
+  <div class="row">
+    <div class="offset-md-2 col-lg-8">
+      <form method="post" action="{% url 'todos:add' %}" class="add-todo-form">
+        {% csrf_token %}
+        <div class="form-row">
+          <div class="col-md-8">
+            <input type="text" class="form-control" name="title" placeholder="What to do?" required>
+          </div>
+          <div class="col-md-4">
+            <button type="submit" name="submit" class="btn btn-primary">
+              Add Todo
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <hr />
+
+  <!-- Todo List Row -->
+  <div class="row">
+    <div class="offset-md-2 col-lg-8">
+      <div class="list-group">
+        {% for todo in todo_list %}
+        <div class="list-group-item todo-item {% if todo.isCompleted %} todo-complete {% endif %}">
+          <form style="display: inline;" method="post" action="{% url 'todos:update' todo.id %}">
+            {% csrf_token %}
+            <input type="checkbox" name="isCompleted" onchange="this.form.submit()" {% if todo.isCompleted %} checked {% endif %} class="todo-status-checkbox"
+              title="{% if not todo.isCompleted %} Mark as done {% else %} Mark undone {% endif %}">
+          </form>
+          <span class="todo-title">{{ todo.title }}</span>
+          <a href="{% url 'todos:delete' todo.id %}" class="delete-link" title="Delete">
+            <i class="far fa-trash-alt"></i>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f4f7f6;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .page-title {
+    color: #333;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .add-todo-form .form-control {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  .add-todo-form .btn-primary {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 10px 20px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .add-todo-form .btn-primary:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+
+  .list-group-item {
+    border: none;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .todo-status-checkbox {
+    margin-right: 15px;
+    cursor: pointer;
+  }
+
+  .todo-title {
+    flex-grow: 1;
+    font-size: 1.1rem;
+  }
+
+  .todo-complete {
+    background-color: #eafaf1;
+    color: #6c757d;
+    text-decoration: line-through;
+  }
+
+  .delete-link {
+    color: #dc3545;
+    font-size: 1.2rem;
+  }
+
+  .delete-link:hover {
+    color: #c82333;
+    text-decoration: none;
+  }
+
+  .page-header {
+    margin-bottom: 20px;
+  }
+</style>
+{% endblock %}
